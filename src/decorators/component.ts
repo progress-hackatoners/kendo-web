@@ -6,31 +6,29 @@ export function component(name: string, options: ElementDefinitionOptions = {}) 
 
             this[attr] = newValue;
         }
-        
-        target.prototype.subscribe = function(prop: string, subscription: Function){
-            if(!this.subscriptions) {
-                this.subscriptions = {};
-            }
 
-            if(!this.subscriptions[prop]) {
-                this.subscriptions[prop] = [subscription];
-                return;
-            }
+        target.observedAttributes.forEach((prop: string) => {
+            let desc = Object.getOwnPropertyDescriptor(target.prototype, prop)!;
 
-            this.subscriptions[prop].push(subscription);
-        };
-
-        target.prototype.notify = function () {
-            const args = arguments;
-            const attr = args[0];
-
-            if(this.subscriptions && this.subscriptions[attr]){
-                this.subscriptions[attr].forEach((subscription: Function) => {
-                    subscription.call(this, ...args);
+            if(desc) {
+                Object.defineProperty(target.prototype, prop, {
+                    configurable: true,
+                    enumerable: false,
+                    get: desc.get,
+                    set: function(_: any){
+                        const oldValue = this[prop];
+                        desc.set?.call(this, _);
+                        if(this.signal) {
+                            this.signal(prop, _, oldValue);
+                        }
+                    }
                 });
-            }
-        }
 
+            } else {
+                console.error("Kendo Component Decorator: Attach the component decorator to get or set field only")
+            } 
+        });
+        
         window.customElements.define(name, target, options);
     };
 }
