@@ -1,1 +1,1 @@
-export * as KendoButton from './button';
+export * as Button from './button';

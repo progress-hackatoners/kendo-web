@@ -223,6 +223,11 @@ export class KendoButton extends HTMLButtonElement {
     private renderIcon() {
         this.iconElm = html.node`<span class='k-icon k-button-icon k-i-${this.icon}'></span>`;
         this.insertBefore(this.iconElm, this.textElm!);
+
+        this.iconElm.addEventListener('click', () => {
+            const ev = new CustomEvent('iconClick', { detail: { icon: this.icon } });
+            this.dispatchEvent(ev);
+        });
     }
 }
 

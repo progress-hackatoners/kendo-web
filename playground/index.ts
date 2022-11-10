@@ -1,11 +1,15 @@
 import '@progress/kendo-theme-default';
-import { KendoButton } from '../src/index';
+import { Button } from '../src/index';
 
-// let kendoBtn = new Kendo.KendoButton.KendoButton();
-let kendoBtn = document.createElement('button', { is: 'kendo-button' }) as KendoButton.KendoButton;
+// let kendoBtn = new Button.KendoButton();
+let kendoBtn = document.createElement('button', { is: 'kendo-button' }) as Button.KendoButton;
 kendoBtn.setAttribute('text', 'Primary');
 kendoBtn.setAttribute('fillmode', 'outline');
-kendoBtn.themeColor = KendoButton.ThemeColor.primary;
+kendoBtn.themeColor = Button.ThemeColor.primary;
+kendoBtn.icon = "gear";
+kendoBtn.addEventListener('iconClick', (ev) => {
+    console.log(ev);
+});
 
 
 const app = document.querySelector('#app')!;
