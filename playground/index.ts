@@ -1,15 +1,16 @@
 import '@progress/kendo-theme-default';
-import '../src/index';
+import { KendoButton } from '../src/index';
 
-// window.KendoButton = KendoButton;
+// let kendoBtn = new Kendo.KendoButton.KendoButton();
+let kendoBtn = document.createElement('button', { is: 'kendo-button' }) as KendoButton.KendoButton;
+kendoBtn.setAttribute('text', 'Primary');
+kendoBtn.setAttribute('fillmode', 'outline');
+kendoBtn.themeColor = KendoButton.ThemeColor.primary;
 
-// // let kendoBtn = new KendoButton();
-// let kendoBtn = document.createElement('button', { is: 'kendo-button' });
-// kendoBtn.setAttribute('text', 'Ivan');
 
-// const app = document.querySelector('#app')!;
+const app = document.querySelector('#app')!;
 
-// app.appendChild(kendoBtn);
+app.appendChild(kendoBtn);
 
 
 

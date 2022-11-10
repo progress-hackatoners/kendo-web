@@ -1,13 +1,15 @@
 export function component(name: string, options: ElementDefinitionOptions = {}) {
     return function (target: any) {
         target.prototype.attributeChangedCallback = function () {
-            const attr = arguments[0];
+            const prop = this.constructor.attrToProp[arguments[0]] ;
             const newValue = arguments[2];
-
-            this[attr] = newValue;
+            
+            if(this[prop] !== newValue) {
+                this[prop] = newValue;
+            }
         }
 
-        target.observedAttributes.forEach((prop: string) => {
+        target.observedProps.forEach((prop: string) => {
             let desc = Object.getOwnPropertyDescriptor(target.prototype, prop)!;
 
             if(desc) {
