@@ -186,6 +186,7 @@ export class KendoButton extends HTMLButtonElement {
             case StyleOption.Rounded:
                 old = getPrefixed(Rounded[old as RoundedKey], { prefix: roundedPrefix });
                 val = getPrefixed(Rounded[val as RoundedKey], { prefix: roundedPrefix });
+                break;
             case StyleOption.FillMode:
                 old = getPrefixed(FillMode[old as FillModeKey]);
                 val = getPrefixed(FillMode[val as FillModeKey]);
