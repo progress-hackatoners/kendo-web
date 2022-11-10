@@ -1,0 +1,14 @@
+body {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
