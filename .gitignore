@@ -1,4 +1,5 @@
 node_modules
 dist
 .angular
+pnpm-lock.yaml
 **/package-lock.json
