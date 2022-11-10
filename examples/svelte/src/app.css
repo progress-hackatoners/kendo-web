@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+}
+
+#app {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+}
