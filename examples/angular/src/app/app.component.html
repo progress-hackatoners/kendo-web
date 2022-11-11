@@ -7,7 +7,10 @@
 
   <h1>Angular</h1>
 
-  <kendo-button is="kendo-button" text="Count is" icon="gear"></kendo-button>
+  <!-- Angular seems to not like the is attr - one Angular god knows why, should read more about it.  -->
+  <!-- <button is="kendo-button" text="Count is" icon="gear"></button> -->
+
+  <kendo-web-button [text]="count" (click)="increment()"></kendo-web-button>
   
   <hello-world></hello-world>
 

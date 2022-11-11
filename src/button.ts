@@ -232,3 +232,39 @@ export class KendoButton extends HTMLButtonElement {
     }
 }
 
+
+//Experimental
+@component('kendo-web-button')
+export class KendoWebButton extends HTMLElement {
+    private _text?: any;
+    private _btn?: KendoButton;
+    @attr()
+    get text() {
+        return this._text!;
+    }
+
+    set text(_: any) {
+        this._text = _;
+    }
+
+    constructor(){
+        super();
+
+    }
+
+    async connectedCallback() {
+        this._btn = new KendoButton();
+
+        this.appendChild(this._btn);
+    }
+
+    signal(prop: string, newValue: string, oldValue: string) {
+        switch (prop) {
+            case 'text':
+                this._btn!.text = this.text;
+                break;
+
+        }
+    }
+}
+

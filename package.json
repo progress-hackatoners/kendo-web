@@ -20,6 +20,7 @@
   "devDependencies": {
     "@progress/kendo-theme-default": "^5.10.0",
     "lighterhtml": "^4.2.0",
+    "tslib": "^2.4.1",
     "typescript": "^4.8.4",
     "vite": "^3.2.2"
   }
