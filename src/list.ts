@@ -92,7 +92,6 @@ export class KendoList extends HTMLUListElement {
         this.list = html.node`<div class='k-list k-list-md'>
             <div class='k-list-content k-list-scroller'>
                 ${this}
-                This is the list!
             </div>
         </div>`;
         
@@ -195,7 +194,8 @@ class KendoListItem extends HTMLLIElement {
     constructor() {
         super();
         this.classList.add("k-list-item");
-        this.textElm = html.node`<span class="k-list-item-text">${this.text}</span>`
+        this.textElm = html.node`<span class="k-list-item-text"></span>`
+        this.textElm.innerText = this.text;
         this.appendChild(this.textElm);
         
         this.textElm.addEventListener('click', (ev) => {

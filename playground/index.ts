@@ -15,7 +15,6 @@ kendoBtn.themeColor = ThemeColor.primary;
 kendoBtn.icon = "gear";
 
 let popup = new Popup.KendoPopup();
-popup.appendChild(document.createElement('div'));
 popup.anchor = kendoBtn;
 
 const app = document.querySelector('#app')!;

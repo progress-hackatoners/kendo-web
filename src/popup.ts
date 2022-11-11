@@ -5,6 +5,9 @@ import { component, attr } from './decorators';
 export class KendoPopup extends HTMLDivElement {
     private _anchor: string | HTMLElement = '';
     private _anchorElm?:  HTMLElement | undefined;
+    private _rendered?: boolean;
+
+    wrapper?: HTMLElement;
 
     @attr()
     public set anchor(value: string | HTMLElement) {
@@ -27,17 +30,40 @@ export class KendoPopup extends HTMLDivElement {
     }
 
     async connectedCallback() {
-        this.render();
+        if(!this._rendered) {
+            this.render();
+        }
+    }
+
+    disconnectedCallback() {
+        if(this.wrapper){
+            const parent = this.wrapper.parentElement! || this.wrapper.ownerDocument.body;
+            const nextElm = this.wrapper.nextElementSibling!;
+
+            parent.insertBefore(this, nextElm);
+            this.wrapper.remove();
+
+            delete this.wrapper;
+            delete this._rendered;
+        }
     }
 
     render() {
+        const parent = this.parentElement! || this.ownerDocument.body;
+        const nextElm = this.nextElementSibling!;
+        this._rendered = true;
         this.hidden = true;
-        this.classList.add('k-animation-container');
-        const childNodes = this.childNodes;
-        const popupPart = html.node`<div class='k-popup k-group k-reset k-state-border-up'>${childNodes}</div>`;
+        this.classList.add('k-popup', 'k-group', 'k-reset', 'k-state-border-up');
+        this.wrapper = html.node`<div class='k-animation-container'>${this}</div>`;
 
-        this.appendChild(popupPart)
-
+        this.wrapper.hidden = true;
+        this.hidden = false;
+        
+        if(parent && nextElm) {
+            parent.insertBefore(this.wrapper, nextElm);
+        } else if (parent) {
+            parent.appendChild(this.wrapper);        
+        }
     }
 
     signal(prop: string, newValue: string, oldValue: string) {
@@ -51,22 +77,26 @@ export class KendoPopup extends HTMLDivElement {
     }   
 
     public hide() {
-        this.hidden = true;
+        this.wrapper!.hidden = true;
     }
 
     public show() {
-        this.hidden = false;
+        this.wrapper!.hidden = false;
         this.position();
     }
 
     public toggle() {
-        this[this.hidden ? 'show' : 'hide']();
+        this[this.wrapper!.hidden ? 'show' : 'hide']();
     }
 
     private position() {
+        if(!this.wrapper) {
+            return;
+        }
+
         let top = 0;
         let left = 0;
-        let width = this.offsetWidth;
+        let width = this.wrapper.offsetWidth;
         
         if (this._anchorElm) {
             top = this._anchorElm.offsetTop + this._anchorElm.offsetHeight;
@@ -74,8 +104,8 @@ export class KendoPopup extends HTMLDivElement {
             width = this._anchorElm.offsetWidth;
         } 
 
-        this.style.top = top + 'px';
-        this.style.left = left + 'px';
-        this.style.width = width + 'px';
+        this.wrapper.style.top = top + 'px';
+        this.wrapper.style.left = left + 'px';
+        this.wrapper.style.width = width + 'px';
     }
 }
