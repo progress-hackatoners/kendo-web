@@ -89,7 +89,7 @@ export class KendoList extends HTMLUListElement {
         this.classList.add('k-list-ul');
         
         this.list = html.node`<div class='k-list k-list-md'>
-            <div class='k-list-content k-list-scroller'>
+            <div class='k-list-content k-list-scroller' style='height: 200px;'>
                 ${this}
             </div>
         </div>`;
@@ -196,7 +196,7 @@ export class KendoList extends HTMLUListElement {
     }
 
     _selectItem() {
-        let elm = this.items.find(i => i.value === this.value);
+        let elm = this.items.find(i => i.value == this.value);
 
          if(elm) {
             if(this.selectedItemElm) {  
@@ -206,7 +206,7 @@ export class KendoList extends HTMLUListElement {
             this.selectedItemElm.selected = true;
         }
     } 
-    
+
     _dispatchDataBound() {
         let event = new CustomEvent('dataBound');
         this.dispatchEvent(event);

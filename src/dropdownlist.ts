@@ -205,7 +205,6 @@ export class KendoDropDownList extends HTMLInputElement {
                 this._list.dataTextField = newValue;
                 break;
             case 'text':
-                debugger
                 if (this._validateText(newValue)) {
                     this._inputValue.textContent = newValue;
                 }
@@ -281,16 +280,15 @@ export class KendoDropDownList extends HTMLInputElement {
         });
 
         this._list.addEventListener('dataBound', () => {
-            this.value = this.value;
-            debugger
-            this.text = this._list.selectedItem?.text;
+            this._list.value = this.value;
+            this.text = this._list.selectedItemElm?.text;
         });
     }
 
     private _createPopup() {
         this._popup = new KendoPopup();
         this.ownerDocument.body.appendChild(this._popup);
-        this._popup.querySelector('.k-popup')?.appendChild(this._list);
+        this._popup.appendChild(this._list);
     }
 
     private _generateLabelId(label: Element, inputId: string) {
@@ -302,14 +300,12 @@ export class KendoDropDownList extends HTMLInputElement {
     }
 
     private _validateValue(value: any) {
-        console.log(value)
         const items = this._list.items;
 
         return items.some(i => i.value === value)
     }
 
     private _validateText(value: any) {
-        console.log(value)
         const items = this._list.items;
 
         return items.some(i => i.text === value)

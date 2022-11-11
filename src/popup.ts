@@ -53,7 +53,7 @@ export class KendoPopup extends HTMLDivElement {
         const nextElm = this.nextElementSibling!;
         this._rendered = true;
         this.hidden = true;
-        this.classList.add('k-popup', 'k-group', 'k-reset', 'k-state-border-up');
+        this.classList.add('k-popup', 'k-list-container');
         this.wrapper = html.node`<div class='k-animation-container'>${this}</div>`;
 
         this.wrapper.hidden = true;
