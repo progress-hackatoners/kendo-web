@@ -33,6 +33,7 @@ let list = document.createElement('ul', { is: 'kendo-list' }, ) as List.KendoLis
 console.log('binding');
 list.dataTextField = 'ProductName';
 list.dataValueField = 'ProductID';
+list.value = 2;
 list.dataSource = fetch('./products.json').then((d) => d.json());
 
 list.addEventListener('change', (ev: any) => {

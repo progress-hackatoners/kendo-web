@@ -14,15 +14,14 @@ export class KendoList extends HTMLUListElement {
     private _rendered?: boolean;
     private _value?: string;
 
-    selectedItem?: KendoListItem;
+    selectedItemElm?: KendoListItem;
 
-    items: Array<HTMLElement> = [];
+    items: Array<KendoListItem> = [];
     
     public list?: HTMLElement;
 
     @attr()
     set value(val: any) {    
-        this._dispatchChange();    
         this._value = val;
     }
 
@@ -107,6 +106,9 @@ export class KendoList extends HTMLUListElement {
             case 'dataSource':
                 this.bind();
                 break;
+            case 'value':
+                this._selectItem();
+                break;
             default:
                 break;
         }
@@ -122,6 +124,8 @@ export class KendoList extends HTMLUListElement {
                     this.items.push(elm);
                     this.appendChild(elm);
                 });
+
+                this._selectItem();
             });
         }
     }
@@ -134,27 +138,40 @@ export class KendoList extends HTMLUListElement {
         let target = ev.target as KendoListItem;
         target.selected = true;
 
-        if(this.selectedItem) {
-            this.selectedItem.selected = false;
+        if(this.selectedItemElm) {
+            this.selectedItemElm.selected = false;
         }
 
         if(this.value !== target.value) {
-            this.selectedItem = target;
+            this.selectedItemElm = target;
             this.value = target.value;
+            this._dispatchChange();
         }
     }
 
     _dispatchChange() {
         let event = new CustomEvent('change', {
             detail: {
-                item: this.selectedItem,
-                text: this.selectedItem!.text,
-                value: this.selectedItem!.value
+                item: this.selectedItemElm,
+                text: this.selectedItemElm!.text,
+                value: this.selectedItemElm!.value
             }
         });
 
         this.dispatchEvent(event);
     }
+
+    _selectItem() {
+        let elm = this.items.find(i => i.value === this.value);
+
+         if(elm) {
+            if(this.selectedItemElm) {  
+                this.selectedItemElm.selected = false;
+            }
+            this.selectedItemElm = elm;
+            this.selectedItemElm.selected = true;
+        }
+    } 
 }
 
 @component('kendo-list-item', { extends: 'li' })
