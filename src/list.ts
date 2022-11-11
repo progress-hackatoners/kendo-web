@@ -115,18 +115,43 @@ export class KendoList extends HTMLUListElement {
     }   
 
     bind() {
-        if (this.dataSource instanceof Promise) {
-            this.dataSource.then((data) => {
-                data.forEach((d: any) => {
-                    let elm = new KendoListItem();
-                    elm.text = d[this.dataTextField];
-                    elm.value = d[this.dataValueField];
+        let ds = this.dataSource;
+
+        this.items = [];
+        this.innerHTML = '';
+
+        if (ds instanceof Promise) {
+            ds.then((data) => {
+                data.forEach(this._createItem.bind(this));
+                this._selectItem();
+                this._dispatchDataBound();
+            });
+        } else if (!!ds) {
+            ds = ds.replace(/\[|\]|\'|\ /g,'').split(',');
+            const first = ds[0];
+
+            if (!first) {
+                return;
+            }
+
+            if (typeof first === 'object' &&
+                !Array.isArray(first)) {
+                    ds.forEach(this._createItem.bind(this));
+                    this._selectItem();
+                    this._dispatchDataBound();
+            } else {
+                ds.forEach((d: any) => {
+                    const elm = new KendoListItem();
+
+                    elm.text = d;
+                    elm.value = d;
                     this.items.push(elm);
                     this.appendChild(elm);
                 });
 
                 this._selectItem();
-            });
+                this._dispatchDataBound();
+            };
         }
     }
 
@@ -147,6 +172,15 @@ export class KendoList extends HTMLUListElement {
             this.value = target.value;
             this._dispatchChange();
         }
+    }
+
+    _createItem(d: any) {
+        const elm = new KendoListItem();
+        elm.text = d[this.dataTextField];
+        elm.value = d[this.dataValueField];
+
+        this.items.push(elm);
+        this.appendChild(elm);
     }
 
     _dispatchChange() {
@@ -172,6 +206,11 @@ export class KendoList extends HTMLUListElement {
             this.selectedItemElm.selected = true;
         }
     } 
+    
+    _dispatchDataBound() {
+        let event = new CustomEvent('dataBound');
+        this.dispatchEvent(event);
+    }
 }
 
 @component('kendo-list-item', { extends: 'li' })

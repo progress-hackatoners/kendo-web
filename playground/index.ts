@@ -6,6 +6,7 @@ import '@progress/kendo-theme-default';
 import { Button, Popup, List } from '../src/index';
 
 import { ThemeColor } from '../src/enums/themecolor'
+import { KendoDropDownList } from '../src/dropdownlist';
 
 // let kendoBtn = new Button.KendoButton();
 let kendoBtn = document.createElement('button', { is: 'kendo-button' }) as Button.KendoButton;
@@ -20,7 +21,7 @@ popup.anchor = kendoBtn;
 const app = document.querySelector('#app')!;
 
 app.appendChild(kendoBtn);
-app.appendChild(popup);
+
 
 kendoBtn.addEventListener('click', (ev) => {
     popup.toggle();
@@ -28,7 +29,7 @@ kendoBtn.addEventListener('click', (ev) => {
 
 // Play around with DOM replacement 
 
-let list = document.createElement('ul', { is: 'kendo-list' }, ) as List.KendoList;
+let list = new List.KendoList();
 
 console.log('binding');
 list.dataTextField = 'ProductName';
@@ -43,6 +44,7 @@ list.addEventListener('change', (ev: any) => {
 console.log('still binding');
 
 popup.appendChild(list);
+app.appendChild(popup);
 // app.appendChild(list);
 
 // list.remove();
@@ -50,6 +52,10 @@ popup.appendChild(list);
 // app.removeChild(list.list!);
 // app.appendChild(list);
 // console.log(list);
+
+const ddl = document.querySelector('#ddl') as KendoDropDownList;
+
+ddl.dataSource = fetch('./products.json').then((d) => d.json());
 
 
 

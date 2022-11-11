@@ -19,8 +19,15 @@
 
       <!-- <ul is="kendo-list"></ul> -->
 
-      <label for="ddl">DropDownList</label>
-      <input is="kendo-dropdown-list" id="ddl"/>
+      <label for="ddl" >DropDownList</label>
+      <input is="kendo-dropdown-list"
+              id="ddl"
+              value="2" 
+              text="gagag"
+              dataSource="['test', 'this']" 
+              optionLabel="Select item..."
+              datavaluefield="ProductID"
+              datatextfield="ProductName"/>
 
       <script type="module" src="index.ts"></script>
   </body>

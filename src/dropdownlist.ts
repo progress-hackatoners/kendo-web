@@ -26,7 +26,10 @@ export class KendoDropDownList extends HTMLInputElement {
     private _dataSource: any;
     private _rendered?: boolean;
     private _value?: string;
+    private _text?: string;
     private _optionLabel?: string;
+    private _dataTextField: string = 'text';
+    private _dataValueField: string = 'value';
     private _size: SizeKey = "medium" as SizeKey;
     private _rounded: RoundedKey = "medium" as RoundedKey;
     private _fillMode: FillModeKey = "solid" as FillModeKey;
@@ -34,7 +37,8 @@ export class KendoDropDownList extends HTMLInputElement {
 
     private _list: KendoList;
     private _button: KendoButton;
-
+    private _popup: KendoPopup;
+    private _inputValue: Element;
 
     public wrapper?: HTMLElement;
 
@@ -48,12 +52,48 @@ export class KendoDropDownList extends HTMLInputElement {
     }
 
     @attr()
-    set value (val: string) {
+    set value (val: any) {
         this._value = val;
     }
 
     get value() {
         return this._value!;
+    }
+
+    @attr(false)
+    set text (val: any) {
+        this._text = val;
+    }
+
+    get text() {
+        return this._text!;
+    }
+
+    @attr()
+    set optionLabel (val: string) {
+        this._optionLabel = val;
+    }
+
+    get optionLabel() {
+        return this._optionLabel;
+    }
+
+    @attr()
+    set dataTextField (val: string) {
+        this._dataTextField = val;
+    }
+
+    get dataTextField() {
+        return this._dataTextField;
+    }
+
+    @attr()
+    set dataValueField (val: string) {
+        this._dataValueField = val;
+    }
+
+    get dataValueField() {
+        return this._dataValueField;
     }
 
     @attr()
@@ -93,6 +133,8 @@ export class KendoDropDownList extends HTMLInputElement {
 
         this._createList();
         this._createButton();
+        this._createPopup();
+        this._createInput();
     }
 
     async connectedCallback() {
@@ -111,7 +153,7 @@ export class KendoDropDownList extends HTMLInputElement {
 
         this.wrapper = html.node`<span role="combobox" tabindex="0" aria=${{ expanded: false, controls: 'list-id' }}>
             <span class="k-input-inner">
-                <span class="k-input-value-text">${this._optionLabel}</span>
+                ${this._inputValue}
             </span>
             ${this._button}
             ${this}
@@ -132,6 +174,11 @@ export class KendoDropDownList extends HTMLInputElement {
         );
 
         this._ariaLabel();
+
+        this._popup.anchor = this.wrapper!;
+        this.wrapper!.addEventListener('click', () => {
+            this._popup.toggle();
+        });
     }
 
     disconnectedCallback() {
@@ -151,8 +198,17 @@ export class KendoDropDownList extends HTMLInputElement {
             case 'dataSource':
                 this._list.dataSource = newValue;
                 break;
-            case 'value':
-                (this.querySelector('.k-input-inner') as HTMLElement).textContent = newValue;
+            case 'dataValueField':
+                this._list.dataValueField = newValue;
+                break;
+            case 'dataTextField':
+                this._list.dataTextField = newValue;
+                break;
+            case 'text':
+                debugger
+                if (this._validateText(newValue)) {
+                    this._inputValue.textContent = newValue;
+                }
                 break;
             case StyleOption.Size:
             case StyleOption.Rounded:
@@ -183,14 +239,6 @@ export class KendoDropDownList extends HTMLInputElement {
             target?.setAttribute('aria-labelledby', labelId);
         }
     }
-
-    private _generateLabelId(label: Element, inputId: string) {
-        var labelId = inputId + '-label-id';
-
-        label.setAttribute('id', labelId);
-
-        return labelId;
-    }
     
     private _createButton() {
         const button = new KendoButton();
@@ -206,8 +254,64 @@ export class KendoDropDownList extends HTMLInputElement {
         this._button = button;
     }
 
+    private _createInput() {
+        const value = this._validateValue(this.value) ? this.value : undefined;
+        const text = this._validateText(this.text) ? this.text : undefined;
+
+        if (value !== this.value) {
+            this.value = value;
+        }
+
+        if (text !== this.text) {
+            this.text = text;
+        }
+
+        this._inputValue = html.node`<span class="k-input-value-text">${text || this._optionLabel}</span>`;
+    }
+
     private _createList() {
         this._list = new KendoList();
+        this._list.dataValueField = this.dataValueField;
+        this._list.dataTextField = this.dataTextField;
         this._list.dataSource = this._dataSource;
+
+        this._list.addEventListener('change', (args: any) => {
+            this.value = args.detail.value;
+            this.text = args.detail.text;
+        });
+
+        this._list.addEventListener('dataBound', () => {
+            this.value = this.value;
+            debugger
+            this.text = this._list.selectedItem?.text;
+        });
+    }
+
+    private _createPopup() {
+        this._popup = new KendoPopup();
+        this.ownerDocument.body.appendChild(this._popup);
+        this._popup.querySelector('.k-popup')?.appendChild(this._list);
+    }
+
+    private _generateLabelId(label: Element, inputId: string) {
+        var labelId = inputId + '-label-id';
+
+        label.setAttribute('id', labelId);
+
+        return labelId;
+    }
+
+    private _validateValue(value: any) {
+        console.log(value)
+        const items = this._list.items;
+
+        return items.some(i => i.value === value)
+    }
+
+    private _validateText(value: any) {
+        console.log(value)
+        const items = this._list.items;
+
+        return items.some(i => i.text === value)
     }
 }

@@ -1,4 +1,4 @@
-export function attr() {
+export function attr(isAttrubute: boolean = true) {
     return function(target: any, name: string) {
         let attr = name.toLowerCase();
 
@@ -10,6 +10,9 @@ export function attr() {
     
         target.constructor.attrToProp[attr] = name;
         target.constructor.observedProps.push(name);
-        target.constructor.observedAttributes.push(name.toLowerCase());
+
+        if (isAttrubute) {
+            target.constructor.observedAttributes.push(name.toLowerCase());
+        }
     }
 }
