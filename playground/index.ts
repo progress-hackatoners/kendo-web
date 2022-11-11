@@ -5,11 +5,13 @@ window.html = html;
 import '@progress/kendo-theme-default';
 import { Button, Popup, List } from '../src/index';
 
+import { ThemeColor } from '../src/enums/themecolor'
+
 // let kendoBtn = new Button.KendoButton();
 let kendoBtn = document.createElement('button', { is: 'kendo-button' }) as Button.KendoButton;
 kendoBtn.setAttribute('text', 'Primary');
 kendoBtn.setAttribute('fillmode', 'outline');
-kendoBtn.themeColor = Button.ThemeColor.primary;
+kendoBtn.themeColor = ThemeColor.primary;
 kendoBtn.icon = "gear";
 
 let popup = new Popup.KendoPopup();

@@ -1,62 +1,27 @@
 import { html } from 'lighterhtml';
 
-import { component, attr } from './decorators';
+import { component, attr, sizingoptions } from './decorators';
 
-export enum Size {
-    small = 'sm', 
-    medium = 'md', 
-    large = 'lg',
-    none = ''
-}
-type SizeKey = keyof typeof Size;
+import { Size } from './enums/size';
+import { Rounded } from './enums/rounded';
+import { FillMode } from './enums/fillmode';
+import { ThemeColor } from './enums/themecolor';
+import { StyleOption } from './enums/styleoption';
 
-export enum Rounded {
-    small = 'sm', 
-    medium = 'md', 
-    large = 'lg',
-    none = ''
-}
-type RoundedKey = keyof typeof Rounded;
+import type { SizeKey } from './enums/size';
+import type { RoundedKey } from './enums/rounded';
+import type { FillModeKey } from './enums/fillmode';
+import type { ThemeColorKey } from './enums/themecolor';
 
-export enum FillMode {
-    solid = 'solid', 
-    outline = 'outline', 
-    link = 'link',
-    none = ''
-}
-type FillModeKey = keyof typeof FillMode;
-
-export enum ThemeColor {
-    base = 'base', 
-    primary = 'primary', 
-    secondary = 'secondary',
-    tertiary = 'tertiary',
-    info = 'info',
-    success = 'success',
-    warning = 'warning',
-    error = 'error',
-    dark = 'dark',
-    light = 'light',
-    inverse = 'inverse',
-    none = ''
-}
-type ThemeColorKey = keyof typeof ThemeColor;
-
-export enum StyleOption {
-    Size = 'size',
-    Rounded = 'rounded',
-    FillMode = 'fillMode',
-    ThemeColor = 'themeColor'
-}
 
 const buttonClass = 'k-button'
-const buttonPrefix = `${buttonClass}-`;
-const roundedPrefix = 'k-rounded-';
-
-const getPrefixed = (val: string, options: { prefix?: string } = {}) => val ? `${options.prefix || buttonPrefix}${val}` : '';
 
 @component('kendo-button', { extends: 'button' })
+@sizingoptions()
 export class KendoButton extends HTMLButtonElement {
+    private wrapperPrefix = `k-button-`;
+    private roundedPrefix = 'k-rounded-';
+
     private _text: string = '';
     private _textElm?: HTMLElement;
     private _icon?: string;
@@ -140,10 +105,10 @@ export class KendoButton extends HTMLButtonElement {
     render() {
         this.classList.add(
             buttonClass, 
-            getPrefixed(Size[this.size]), 
-            getPrefixed(Rounded[this.rounded], { prefix: roundedPrefix }), 
-            getPrefixed(FillMode[this.fillMode]), 
-            getPrefixed(ThemeColor[this.themeColor], { prefix: `${getPrefixed(FillMode[this.fillMode])}-` })
+            this.getPrefixed(Size[this.size]), 
+            this.getPrefixed(Rounded[this.rounded], { prefix: this.roundedPrefix }), 
+            this.getPrefixed(FillMode[this.fillMode]), 
+            this.getPrefixed(ThemeColor[this.themeColor], { prefix: `${this.getPrefixed(FillMode[this.fillMode])}-` })
         );
     }
 
@@ -173,48 +138,6 @@ export class KendoButton extends HTMLButtonElement {
                 break;
         }
     }
-
-    private updateStyleOptions(op: StyleOption, val: string, old: string) {
-        let themeColorOld: string;
-        let themeColorNew: string;
-
-        switch (op) {
-            case StyleOption.Size:
-                old = getPrefixed(Size[old as SizeKey]);
-                val = getPrefixed(Size[val as SizeKey]);
-                break;
-            case StyleOption.Rounded:
-                old = getPrefixed(Rounded[old as RoundedKey], { prefix: roundedPrefix });
-                val = getPrefixed(Rounded[val as RoundedKey], { prefix: roundedPrefix });
-                break;
-            case StyleOption.FillMode:
-                old = getPrefixed(FillMode[old as FillModeKey]);
-                val = getPrefixed(FillMode[val as FillModeKey]);
-                themeColorOld = getPrefixed(ThemeColor[this.themeColor as ThemeColorKey], { prefix: `${old}-` });
-                themeColorNew = getPrefixed(ThemeColor[this.themeColor as ThemeColorKey], { prefix: `${val}-` });
-                break;
-            case StyleOption.ThemeColor:
-                old = getPrefixed(ThemeColor[old as ThemeColorKey], { prefix: `${getPrefixed(FillMode[this.fillMode])}-` });
-                val = getPrefixed(ThemeColor[val as ThemeColorKey], { prefix: `${getPrefixed(FillMode[this.fillMode])}-` });
-                break;
-        }
-
-        if (old) {
-            this.classList.remove(old);
-        }
-
-        if (val) {
-            this.classList.add(val);
-        }
-       
-        if (themeColorOld!) {
-            this.classList.remove(themeColorOld);
-        } 
-
-        if (themeColorNew!) {
-            this.classList.add(themeColorNew);
-        } 
-    }   
 
     private renderText() {
         this.textElm = html.node`<span class='k-button-text'>${this.text}</span>`;
