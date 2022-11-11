@@ -87,6 +87,7 @@ export class KendoList extends HTMLUListElement {
         const parent = this.parentElement! || this.ownerDocument.body;
         const nextElm = this.nextElementSibling!;
         this.classList.add('k-list-ul');
+        this.setAttribute('role', 'listbox');
         
         this.list = html.node`<div class='k-list k-list-md'>
             <div class='k-list-content k-list-scroller' style='height: 200px;'>
@@ -163,11 +164,11 @@ export class KendoList extends HTMLUListElement {
         let target = ev.target as KendoListItem;
         target.selected = true;
 
-        if(this.selectedItemElm) {
-            this.selectedItemElm.selected = false;
-        }
-
         if(this.value !== target.value) {
+            if(this.selectedItemElm) {
+                this.selectedItemElm.selected = false;
+            }
+
             this.selectedItemElm = target;
             this.value = target.value;
             this._dispatchChange();
@@ -196,7 +197,7 @@ export class KendoList extends HTMLUListElement {
     }
 
     _selectItem() {
-        let elm = this.items.find(i => i.value == this.value);
+        let elm = this.items.find(i => i.value === this.value);
 
          if(elm) {
             if(this.selectedItemElm) {  
@@ -250,6 +251,7 @@ class KendoListItem extends HTMLLIElement {
     constructor() {
         super();
         this.classList.add("k-list-item");
+        this.setAttribute('role', 'option');
         this.textElm = html.node`<span class="k-list-item-text"></span>`
         this.textElm.innerText = this.text;
         this.appendChild(this.textElm);
@@ -258,7 +260,7 @@ class KendoListItem extends HTMLLIElement {
             const clickEvent = new MouseEvent('click', ev);
             this.dispatchEvent(clickEvent);
             ev.stopPropagation();
-        })
+        });
     }
 
     async connectedCallback() {

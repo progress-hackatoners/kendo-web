@@ -41,6 +41,7 @@ export class KendoDropDownList extends HTMLInputElement {
     private _inputValue: Element;
 
     public wrapper?: HTMLElement;
+    private ariaLabel?: any;
 
     @attr()
     set dataSource (val: any) {
@@ -135,23 +136,34 @@ export class KendoDropDownList extends HTMLInputElement {
         this._createButton();
         this._createPopup();
         this._createInput();
+
+        this.events();
     }
 
-    async connectedCallback() {
+    connectedCallback() {
         if(!this._rendered) {
             this.render();
         }
+    }
+
+    events() {
+        window.addEventListener('click', (args) => {
+            if (!this.wrapper!.contains(args.target)) {
+                this._popup.hide();
+            }
+        });
     }
 
     render() {
         this._rendered = true;
         const parent = this.parentElement! || this.ownerDocument.body;
         const nextElm = this.nextElementSibling!;
+        const listId = this.id + 'list-id';
 
         this.classList.add('k-hidden');
         this.setAttribute('aria-hidden', 'true');
 
-        this.wrapper = html.node`<span role="combobox" tabindex="0" aria=${{ expanded: false, controls: 'list-id' }}>
+        this.wrapper = html.node`<span role="combobox" tabindex="0" aria=${{ expanded: false, controls: listId }}>
             <span class="k-input-inner">
                 ${this._inputValue}
             </span>
@@ -179,6 +191,9 @@ export class KendoDropDownList extends HTMLInputElement {
         this.wrapper!.addEventListener('click', () => {
             this._popup.toggle();
         });
+
+        this._list.setAttribute('id', listId);
+        this._list.setAttribute('aria-label', this.ariaLabel + ' list');
     }
 
     disconnectedCallback() {
@@ -230,12 +245,15 @@ export class KendoDropDownList extends HTMLInputElement {
             labelId;
 
         if (ariaLabel) {
+            this.ariaLabel = ariaLabel;
             target?.setAttribute('aria-label', ariaLabel);
         } else if (ariaLabelledBy) {
             target?.setAttribute('aria-labelledby', ariaLabelledBy);
+            this.ariaLabel = document.querySelector('#' + ariaLabelledBy)?.textContent;
         } else if (labelElm) {
             labelId = labelElm.getAttribute('id') || this._generateLabelId(labelElm, inputId || 'kendo-ddl');
             target?.setAttribute('aria-labelledby', labelId);
+            this.ariaLabel = labelElm.textContent;
         }
     }
     
@@ -249,6 +267,7 @@ export class KendoDropDownList extends HTMLInputElement {
         button.fillMode = this.fillMode;
         button.classList.add('k-input-button');
         button.setAttribute('aria-hidden', 'true');
+        button.setAttribute('tabindex', -1);
 
         this._button = button;
     }
@@ -277,9 +296,17 @@ export class KendoDropDownList extends HTMLInputElement {
         this._list.addEventListener('change', (args: any) => {
             this.value = args.detail.value;
             this.text = args.detail.text;
+            this._popup.hide();
         });
 
         this._list.addEventListener('dataBound', () => {
+            const numValue = !isNaN(Number(this.value)) && typeof this.value !== "number";
+
+
+            if (numValue) {
+                this.value = Number(this.value);
+            }
+
             this._list.value = this.value;
             this.text = this._list.selectedItemElm?.text;
         });

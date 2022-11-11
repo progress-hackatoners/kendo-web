@@ -2,7 +2,7 @@ import { html } from 'lighterhtml';
 
 window.html = html;
 
-import '@progress/kendo-theme-default';
+import '@progress/kendo-theme-default/';
 import { Button, Popup, List } from '../src/index';
 
 import { ThemeColor } from '../src/enums/themecolor'
