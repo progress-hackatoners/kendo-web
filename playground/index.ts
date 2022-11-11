@@ -1,7 +1,7 @@
 import { html } from 'lighterhtml';
 
 import '@progress/kendo-theme-default';
-import { Button, Popup } from '../src/index';
+import { Button, Popup, List } from '../src/index';
 
 // let kendoBtn = new Button.KendoButton();
 let kendoBtn = document.createElement('button', { is: 'kendo-button' }) as Button.KendoButton;
@@ -25,6 +25,20 @@ app.appendChild(popup);
 kendoBtn.addEventListener('click', (ev) => {
     popup.toggle();
 });
+
+// Play around with DOM replacement 
+
+// let list = document.createElement('ul', { is: 'kendo-list' }) as List.KendoList;
+// list.dataSource = [];
+
+// app.appendChild(list);
+
+// list.remove();
+// app.appendChild(list);
+// app.removeChild(list.list!);
+// app.appendChild(list);
+// console.log(list);
+
 
 
 
