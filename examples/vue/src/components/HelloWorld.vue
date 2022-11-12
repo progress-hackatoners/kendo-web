@@ -2,19 +2,29 @@
   import { ref } from 'vue'
 
   import '@progress/kendo-theme-default';
-  import '../../../../src/index';
+  import '../../../../src/dropdownlist';
 
   defineProps({
     msg: String
   })
 
-  const count = ref(0)
+  let count = ref(0);
+
+  let sizes = [
+    { text: 'Small', value: 'small'},
+    { text: 'Medium', value: 'medium'},
+    { text: 'Large', value: 'large'}
+  ]
+
+  let buttonSize = ref('small');
 </script>
 
 <template>
   <h1>{{ msg }}</h1>
 
   <div class="card">
-    <button is="kendo-button" :text="`Count is: ${count}`" icon="gear" @click="count++"></button>
+    <span>Button is {{buttonSize}}</span>
+    <button is="kendo-button" :text="`Count is: ${count}`" icon="gear" :size="buttonSize" @click="count++"></button>
+    <input is="kendo-dropdown-list" :dataSource.prop="sizes" v-model="buttonSize" @change="e => buttonSize = e.target.value" />
   </div>
 </template>

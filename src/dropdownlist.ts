@@ -224,6 +224,9 @@ export class KendoDropDownList extends HTMLInputElement {
                     this._inputValue.textContent = newValue;
                 }
                 break;
+            case 'value':
+                this._list.value = this.value;
+                break;
             case StyleOption.Size:
             case StyleOption.Rounded:
             case StyleOption.FillMode:
@@ -297,6 +300,10 @@ export class KendoDropDownList extends HTMLInputElement {
             this.value = args.detail.value;
             this.text = args.detail.text;
             this._popup.hide();
+
+            let ev = new Event('change');
+
+            this.dispatchEvent(ev);
         });
 
         this._list.addEventListener('dataBound', () => {

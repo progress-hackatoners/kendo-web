@@ -127,6 +127,10 @@ export class KendoList extends HTMLUListElement {
                 this._selectItem();
                 this._dispatchDataBound();
             });
+        } else if (Array.isArray(ds)) {
+            ds.forEach(this._createItem.bind(this));
+            this._selectItem();
+            this._dispatchDataBound();
         } else if (!!ds) {
             ds = ds.replace(/\[|\]|\'|\ /g,'').split(',');
             const first = ds[0];
@@ -198,7 +202,7 @@ export class KendoList extends HTMLUListElement {
 
     _selectItem() {
         let elm = this.items.find(i => i.value === this.value);
-
+        
          if(elm) {
             if(this.selectedItemElm) {  
                 this.selectedItemElm.selected = false;
