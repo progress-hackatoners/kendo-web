@@ -13,12 +13,22 @@ export class KendoList extends HTMLUListElement {
     private _dataValueField: string = 'value';
     private _rendered?: boolean;
     private _value?: string;
+    private _itemTemplate?: Function;
 
     selectedItemElm?: KendoListItem;
 
     items: Array<KendoListItem> = [];
     
     public list?: HTMLElement;
+
+    @attr()
+    set itemTemplate(val: any) {    
+        this._itemTemplate = val;
+    }
+
+    get itemTemplate() {
+        return this._itemTemplate;
+    }
 
     @attr()
     set value(val: any) {    
@@ -183,6 +193,10 @@ export class KendoList extends HTMLUListElement {
         const elm = new KendoListItem();
         elm.text = d[this.dataTextField];
         elm.value = d[this.dataValueField];
+        
+        if(this.itemTemplate) {
+            elm.template = this.itemTemplate;
+        }
 
         this.items.push(elm);
         this.appendChild(elm);
@@ -220,10 +234,20 @@ export class KendoList extends HTMLUListElement {
 
 @component('kendo-list-item', { extends: 'li' })
 class KendoListItem extends HTMLLIElement {
-    private textElm: HTMLElement;
+    private textElm?: HTMLElement;
     private _text?: string;
+    private _template?: string | Function;
     private _value?: string;
     private _selected: boolean = false;
+
+    @attr()
+    set template(val: any) {
+        this._template = val;
+    }
+
+    get template() {
+        return this._template!;
+    }
 
     @attr()
     set text(val: string) {
@@ -254,27 +278,48 @@ class KendoListItem extends HTMLLIElement {
 
     constructor() {
         super();
+    }
+
+    async connectedCallback() {
         this.classList.add("k-list-item");
         this.setAttribute('role', 'option');
         this.textElm = html.node`<span class="k-list-item-text"></span>`
-        this.textElm.innerText = this.text;
-        this.appendChild(this.textElm);
         
-        this.textElm.addEventListener('click', (ev) => {
+        if (!this.template) {
+            this.textElm.innerText = this.text;
+        } else {
+            const rendering = this.template.bind(this)({ text: this.text, value: this.value });
+
+            if(typeof rendering === 'string') {
+                this.textElm.innerHTML = rendering;
+            }
+
+            if(rendering instanceof HTMLElement) {
+                this.textElm.appendChild(rendering);
+            }
+
+            if(rendering instanceof DocumentFragment) {
+                for (let i=0; i<rendering.children.length; i++) {
+                    this.textElm.appendChild(rendering.children[i]);
+                }               
+            }
+        }
+        
+        this.appendChild(this.textElm!)
+        
+        this.textElm!.addEventListener('click', (ev) => {
             const clickEvent = new MouseEvent('click', ev);
             this.dispatchEvent(clickEvent);
             ev.stopPropagation();
         });
     }
 
-    async connectedCallback() {
-
-    }
-
     signal(prop: string) {
         switch (prop) {
             case 'text':
-                this.textElm.innerText = this.text;
+                if(!this.template && this.textElm) {
+                    this.textElm.innerText = this.text;
+                }
                 break;
             case 'selected':
                 this.classList.toggle(States.Selected, this.selected);

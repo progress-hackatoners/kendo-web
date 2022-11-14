@@ -39,9 +39,19 @@ export class KendoDropDownList extends HTMLInputElement {
     private _button: KendoButton;
     private _popup: KendoPopup;
     private _inputValue: Element;
+    private _itemTemplate?: Function;
 
     public wrapper?: HTMLElement;
     private ariaLabel?: any;
+
+    @attr()
+    set itemTemplate (val: Function) {
+        this._itemTemplate = val;
+    }
+
+    get itemTemplate() {
+        return this._itemTemplate!;
+    }
 
     @attr()
     set dataSource (val: any) {
@@ -210,6 +220,9 @@ export class KendoDropDownList extends HTMLInputElement {
 
     signal(prop: string, newValue: string, oldValue: string) {
         switch (prop) {
+            case 'itemTemplate':
+                this._list.itemTemplate = this.itemTemplate;
+                break;
             case 'dataSource':
                 this._list.dataSource = newValue;
                 break;
@@ -292,6 +305,7 @@ export class KendoDropDownList extends HTMLInputElement {
 
     private _createList() {
         this._list = new KendoList();
+        this._list.itemTemplate = this.itemTemplate;
         this._list.dataValueField = this.dataValueField;
         this._list.dataTextField = this.dataTextField;
         this._list.dataSource = this._dataSource;
