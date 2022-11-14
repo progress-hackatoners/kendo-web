@@ -1,0 +1,14 @@
+{
+  "name": "kendo-web-html-example",
+  "version": "1.0.0",
+  "description": "Example showing a POC about using Kendo Web in vanilla HTML app",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx vite"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vite": "^3.2.3"
+  }
+}

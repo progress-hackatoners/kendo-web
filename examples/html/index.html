@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kendo Web UI + Vite</title>
+    <link rel="stylesheet" href="http://unpkg.com/@progress/kendo-theme-default/dist/all.css" />
+    <link rel="stylesheet" href="./styles/index.css" />
+    <script type="module" src="./js/index.ts"></script>
+  </head>
+  <body>
+    <div id="app">
+        <span id="sizeText">Button is small</span>
+        
+        <button id="btn" is="kendo-button" text="Count is: 0" 
+                        icon="gear" size="small"></button>
+
+        <input id="ddl"  is="kendo-dropdown-list" value="small" />
+    </div>
+  </body>
+</html>
